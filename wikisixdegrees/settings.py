@@ -12,6 +12,12 @@ BOT_NAME = 'wikisixdegrees'
 SPIDER_MODULES = ['wikisixdegrees.spiders']
 NEWSPIDER_MODULE = 'wikisixdegrees.spiders'
 
+# MySQL settings
+MYSQL_HOST = "127.0.0.1"
+MYSQL_PORT = 3306
+MYSQL_DB = "wikidb"
+MYSQL_USER = "root"
+MYSQL_PASS = "mysql123"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'wikisixdegrees (+http://www.yourdomain.com)'
@@ -62,9 +68,9 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'wikisixdegrees.pipelines.WikisixdegreesPipeline': 300,
-#}
+ITEM_PIPELINES = {
+    'wikisixdegrees.pipelines.WikiPagesPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

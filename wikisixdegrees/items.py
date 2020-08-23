@@ -4,9 +4,11 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 import scrapy
+from scrapy.item import Field
 
-
-class WikisixdegreesItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class WikiPageItem(scrapy.Item):
+    url = Field()
+    title = Field()
+    content = Field()
+    outgoing_links = Field()
+    date_visited = Field()
