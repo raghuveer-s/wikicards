@@ -12,3 +12,4 @@ class WikiPageItem(scrapy.Item):
     content = Field()
     outgoing_links = Field()
     date_visited = Field()
+    followed = Field()
