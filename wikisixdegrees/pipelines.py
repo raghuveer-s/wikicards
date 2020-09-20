@@ -1,5 +1,6 @@
 import logging
 import hashlib
+import traceback
 
 from itemadapter import ItemAdapter
 from scrapy.link import Link
@@ -57,11 +58,16 @@ class WikiPagesPipeline:
                     data = (node_b_id, link.url)
                     cursor.execute(stmt_insert_node, data)
 
+                    self.db.commit()
+
                     stmt_insert_edge = "insert into edge(a, b) values(%s, %s)"
                     data = (node_a_id, node_b_id)
                     cursor.execute(stmt_insert_edge, data)
+
+                    self.db.commit()
         except Exception as e:
-            print(e)
+            #logging.error(traceback.format_exc())
+            print(traceback.format_exc())
 
         self.db.commit()
 

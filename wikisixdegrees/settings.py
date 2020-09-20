@@ -10,7 +10,9 @@
 BOT_NAME = 'wikisixdegrees'
 
 # Custom settings
-CUSTOM_MAX_REQUESTS = 5 # Doing it this way instead of scrapy extensions
+
+# Doing it this way instead of scrapy extensions for max requests
+CUSTOM_MAX_REQUESTS = 5
 
 SPIDER_MODULES = ['wikisixdegrees.spiders']
 NEWSPIDER_MODULE = 'wikisixdegrees.spiders'
@@ -33,6 +35,7 @@ DEPTH_LIMIT = 2
 
 # Log level
 LOG_LEVEL = 'INFO'
+LOG_FILE = 'wikisixdegrees.log'
 
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
