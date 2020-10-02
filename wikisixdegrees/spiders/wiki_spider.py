@@ -21,7 +21,7 @@ class WikiSpider(scrapy.Spider):
     def parse(self, response):
         url = response.url
         #links = [s.get() for s in response.xpath("//a/@href")]
-        link_extractor = LinkExtractor(allow=('\/wiki\/.*'), allow_domains=('en.wikipedia.org'))
+        link_extractor = LinkExtractor(allow=('\/wiki\/.*'), allow_domains=('en.wikipedia.org'), canonicalize=True)
         links = link_extractor.extract_links(response)
 
         title = response.xpath("//head/title/text()").get()

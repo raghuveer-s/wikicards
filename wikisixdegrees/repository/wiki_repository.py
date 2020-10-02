@@ -3,7 +3,10 @@ import mysql.connector
 import wikisixdegrees.settings as settings
 from wikisixdegrees.model.node import Node
 
-class WikiRepository:
+class NodeRepository:
+    '''
+    Data access methods to return one or more specific nodes
+    '''
 
     def get_unvisited_nodes(self) -> List[Node]:
         '''
@@ -30,3 +33,11 @@ class WikiRepository:
 
         for node in nodes:
             yield Node(*node)
+
+class PathRepository:
+    '''
+    Data access methods to get paths
+    '''
+    
+    def get_shortest_paths(self, link_a:str, link_b:str) -> List[Node]:
+        return []

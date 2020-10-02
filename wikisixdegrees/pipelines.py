@@ -38,6 +38,7 @@ class WikiPagesPipeline:
         cursor = self.db.cursor()
         
         # Moved id generation from database side to server side due to edge referencing it
+        item['url'] = item['url'].lower()
         m = hashlib.md5()
         m.update(bytes(item['url'], "utf-8"))
         node_a_id = m.hexdigest()
@@ -46,20 +47,35 @@ class WikiPagesPipeline:
         data = (node_a_id, item['url'], item['title'], item['content'], item['date_visited'])
         cursor.execute(stmt_insert_node, data)
 
+        self.db.commit()
+
         # If item has been followed, it should have outgoing links
+        # There should only be 1 edge from this node to an outgoing node
+        
+        outgoing_urls = set()
+
         try:
             if item['followed'] == True and item['outgoing_links'] is not None:
                 for link in item['outgoing_links']:
+                    link.url = link.url.lower()
+                    outgoing_urls.add(link.url)
+            
+            for url in outgoing_urls:
                     m = hashlib.md5()
-                    m.update(bytes(link.url, "utf-8"))
+                    m.update(bytes(url, "utf-8"))
                     node_b_id = m.hexdigest()
+
+                    # no cycles of length 1
+                    if node_a_id == node_b_id:
+                        continue
                     
                     stmt_insert_node = "insert ignore into node(id, url) values(%s, %s)"
-                    data = (node_b_id, link.url)
+                    data = (node_b_id, url)
                     cursor.execute(stmt_insert_node, data)
 
                     self.db.commit()
 
+                    print(node_a_id, node_b_id, item['url'], url)
                     stmt_insert_edge = "insert into edge(a, b) values(%s, %s)"
                     data = (node_a_id, node_b_id)
                     cursor.execute(stmt_insert_edge, data)
