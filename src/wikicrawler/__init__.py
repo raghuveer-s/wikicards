@@ -2,7 +2,8 @@ import logging
 import sched
 import sys
 
-from scrapy.crawler import CrawlerProcess
+#from scrapy.crawler import CrawlerProcess
+from scrapy.crawler import CrawlerRunner
 from scrapy import signals
 from . import settings
 
@@ -65,13 +66,18 @@ class WikiCrawler:
         if kwargs.get("depth_limit"):
             WikiSpider.custom_settings["DEPTH_LIMIT"] = kwargs["depth_limit"]
 
-        crawler_process = CrawlerProcess(
-            settings={key: getattr(settings, key) for key in dir(settings)}
-        )
-        crawler = crawler_process.create_crawler(WikiSpider)
-        crawler.signals.connect(self.cb_spider_closed, signals.spider_closed)
-        crawler_process.crawl(crawler)
-        crawler_process.start()
+        # crawler_process = CrawlerProcess(
+        #     settings={key: getattr(settings, key) for key in dir(settings)}
+        # )
+        # crawler = crawler_process.create_crawler(WikiSpider)
+        # crawler.signals.connect(self.cb_spider_closed, signals.spider_closed)
+        # crawler_process.crawl(crawler)
+        # crawler_process.start()
+
+        crawler_runner = CrawlerRunner(settings={key: getattr(settings, key) for key in dir(settings)})
+        deferred = crawler_runner.crawl(WikiSpider)
+        deferred.addCallback(self.cb_spider_closed)
+        
 
     def cb_spider_closed(self):
         print("spider closed")
