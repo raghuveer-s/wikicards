@@ -7,7 +7,8 @@ from scrapy.linkextractors import LinkExtractor
 from scrapy.link import Link
 import scrapy
 
-from ..items import WikiPageItem
+from wikicrawler.items import WikiPageItem
+from wikicrawler.repository.wiki_repository import NodeRepository
 
 
 class WikiSpider(scrapy.Spider):
@@ -16,6 +17,10 @@ class WikiSpider(scrapy.Spider):
     custom_settings = {"DEPTH_LIMIT": 0}
 
     start_urls = ["https://en.wikipedia.org/wiki/Main_Page"]
+
+    def start_requests(self):
+        for url in self.start_urls:
+            yield Request(url, callback=self.parse, errback=self.errback, dont_filter=True)
 
     def parse(self, response):
         url = response.url
@@ -45,12 +50,13 @@ class WikiSpider(scrapy.Spider):
             for link in links:
                 req = Request(link.url)
                 yield req
-        else:
-            for link in links:
-                yield WikiPageItem(
-                    url=link.url,
-                    title=None,
-                    content=None,
-                    date_visited=None,
-                    followed=False,
-                )
+    
+    def errback(self, failure):
+        logging.error(repr(failure))
+
+        url = failure.request.url
+
+        node_repository = NodeRepository()
+        node_repository.delete_node_by_url(url)
+
+        print("Deleted url since it gave error: " + url)

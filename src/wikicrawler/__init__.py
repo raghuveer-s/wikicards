@@ -1,4 +1,5 @@
 import logging
+import sched
 import sys
 
 from scrapy.crawler import CrawlerProcess
@@ -10,7 +11,6 @@ from .repository.wiki_repository import NodeRepository
 from .service.path_finder import PathFinder
 import validators
 
-
 class WikiCrawler:
     def explore_existing(self):
         repo = NodeRepository()
@@ -18,7 +18,7 @@ class WikiCrawler:
 
         max_requests = settings.CUSTOM_MAX_REQUESTS
 
-        print("Max requests: {}".format(max_requests))
+        print("(Explore existing) Max requests: {}".format(max_requests))
 
         requests = []
         i = 0
@@ -27,12 +27,14 @@ class WikiCrawler:
                 requests.append(node.url)
                 i += 1
 
-        start_spider(requests)
+        print(requests)
+
+        self.start_spider(requests)
 
     def explore_paths(self, link_a: str):
         requests = []
         requests.append(link_a)
-        start_spider(requests)
+        self.start_spider(requests)
 
     def get_paths(self, link_a: str, link_b: str):
         paths = PathFinder().find(link_a, link_b)
@@ -44,7 +46,7 @@ class WikiCrawler:
             requests.append(link_a)
             requests.append(link_b)
 
-            start_spider(requests, depth_limit=2)
+            self.start_spider(requests, depth_limit=2)
         else:
             # TODO
             # If path exists, the app must catch the stop signal and give the shortest path
@@ -67,7 +69,7 @@ class WikiCrawler:
             settings={key: getattr(settings, key) for key in dir(settings)}
         )
         crawler = crawler_process.create_crawler(WikiSpider)
-        crawler.signals.connect(cb_spider_closed, signals.spider_closed)
+        crawler.signals.connect(self.cb_spider_closed, signals.spider_closed)
         crawler_process.crawl(crawler)
         crawler_process.start()
 

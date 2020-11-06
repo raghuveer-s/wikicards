@@ -7,6 +7,7 @@ import scrapy
 from scrapy.item import Field
 
 class WikiPageItem(scrapy.Item):
+    id = Field()
     url = Field()
     title = Field()
     content = Field()
