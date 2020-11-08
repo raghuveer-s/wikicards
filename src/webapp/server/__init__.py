@@ -2,6 +2,8 @@ import os
 
 from flask import Flask
 
+from . import path
+
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -17,5 +19,9 @@ def create_app(test_config=None):
     @app.route("/article/<id>")
     def get_article(id):
         return "Article {}".format(id)
+    
+    @app.route("/search", methods = ['POST'])
+    def search_path(first_url:str, second_url:str):
+        return path.find_path(first_url, second_url)
 
     return app

@@ -112,6 +112,12 @@ class WikiPagesPipeline:
 
         return item
 
+class CleanWikiPagesPipeline:
+    """
+    Remove the noise from the page and simplify the resultant HTML
+    """
+    pass
+
 # Deprecated
 # Lesser moving pieces in just using cronjob and dumping daily data to BigQuery
 
