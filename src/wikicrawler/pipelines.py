@@ -9,8 +9,8 @@ from scrapy.link import Link
 from .items import WikiPageItem
 import mysql.connector
 
-from google.cloud import pubsub_v1
-
+from ml import data
+from ml.repository import CleanedContentRepository
 
 class WikiPagesPipeline:
     """
@@ -114,58 +114,15 @@ class WikiPagesPipeline:
 
 class CleanWikiPagesPipeline:
     """
-    Remove the noise from the page and simplify the resultant HTML
+    Clean HTML from wiki page.
     """
-    pass
 
-# Deprecated
-# Lesser moving pieces in just using cronjob and dumping daily data to BigQuery
+    def process_item(self, item, spider):
+        # TODO: scraper should not be aware of classes in ml package
+        node_id, article_content = item["id"], item["content"]
+        cleaned_content = data.clean_wiki_page(article_content)
+        
+        repo = CleanedContentRepository()
+        repo.add(node_id, cleaned_content)
 
-# class GooglePubSubPipeline:
-#     """
-#     Sends the item information to Google Pub/Sub
-#     """
-
-#     def process_item(self, item, spider):
-#         if item["followed"]:
-#             # Taking the quick and dirty route instead of messing around with __dict__ property
-#             # 1. Get dict and encode to json byte string
-#             # 2. Hardcode topic
-
-#             outgoing_urls = set()
-
-#             for link in item["outgoing_links"]:
-#                 if link.url != item["url"]:
-#                     link.url = link.url.lower()
-#                     outgoing_urls.add(link.url)
-            
-#             # sets are not serializable
-#             outgoing_urls = list(outgoing_urls)
-
-#             message_dict = {
-#                 "id": item["id"],
-#                 "url": item["url"],
-#                 "title": item["title"],
-#                 "content": item["content"],
-#                 "outgoing_urls": outgoing_urls,
-#                 "date_visited": item["date_visited"],
-#                 "followed": item["followed"],
-#             }
-#             message = json.dumps(message_dict, default=str).encode("utf-8")
-
-#             print("Starting to publish")
-
-#             # Callback for future
-#             def callback(future: Future):
-#                 try:
-#                     print(future.result(5))
-#                 except:
-#                     logging.exception(future.exception())
-#                 pass
-
-#             publisher = pubsub_v1.PublisherClient()
-#             topic = "projects/gcp-proj-wikisixdegrees/topics/gcp.wikipage"
-#             future = publisher.publish(topic, message)
-#             future.add_done_callback(callback)
-
-#         return item
+        return item

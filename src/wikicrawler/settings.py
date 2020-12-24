@@ -34,8 +34,8 @@ ROBOTSTXT_OBEY = True
 DEPTH_LIMIT = 2
 
 # Log level
-LOG_LEVEL = "DEBUG"
-LOG_FILE = "wikicrawler.log"
+LOG_LEVEL = "INFO"
+LOG_FILE = "logfile.log"
 
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
@@ -83,7 +83,8 @@ RANDOMIZE_DOWNLOAD_DELAY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    "wikicrawler.pipelines.WikiPagesPipeline": 300
+    "wikicrawler.pipelines.WikiPagesPipeline": 300,
+    "wikicrawler.pipelines.CleanWikiPagesPipeline": 400
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

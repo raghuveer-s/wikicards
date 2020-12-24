@@ -10,6 +10,7 @@ import scrapy
 from wikicrawler.items import WikiPageItem
 from wikicrawler.repository.wiki_repository import NodeRepository
 
+logger = logging.getLogger("wikicrawler")
 
 class WikiSpider(scrapy.Spider):
     name = "wikispider"
@@ -19,6 +20,7 @@ class WikiSpider(scrapy.Spider):
     start_urls = ["https://en.wikipedia.org/wiki/Main_Page"]
 
     def start_requests(self):
+        self.logger.info(self.start_urls)
         for url in self.start_urls:
             yield Request(url, callback=self.parse, errback=self.errback, dont_filter=True)
 
@@ -46,13 +48,15 @@ class WikiSpider(scrapy.Spider):
         )
         yield pageItem
 
+        # meta["depth"] is part of the DepthMiddleware in scrapy.
+        # It is used to control the depth of each request in the site being scraped.
         if response.request.meta["depth"] < self.custom_settings["DEPTH_LIMIT"]:
             for link in links:
                 req = Request(link.url)
                 yield req
     
     def errback(self, failure):
-        logging.error(repr(failure))
+        logger.error(repr(failure))
 
         url = failure.request.url
 
