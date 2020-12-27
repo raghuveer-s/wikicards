@@ -1,4 +1,5 @@
 import logging
+import urllib.parse
 import datetime
 
 from scrapy import Request
@@ -58,7 +59,7 @@ class WikiSpider(scrapy.Spider):
     def errback(self, failure):
         logger.error(repr(failure))
 
-        url = failure.request.url
+        url = urllib.parse.unquote(failure.request.url)
 
         node_repository = NodeRepository()
         node_repository.delete_node_by_url(url)

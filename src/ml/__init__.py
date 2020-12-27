@@ -14,8 +14,10 @@ def train():
     from ml.train import calculate_lsa
     from ml.repository import CleanedContentRepository
 
-    articles = CleanedContentRepository().list()
-    calculate_lsa(articles)
+    repo = CleanedContentRepository()
+    articles = repo.list()
+    articleid_topics_map = calculate_lsa(articles)
+    repo.save_article_topics(articleid_topics_map)
 
 def get_topics(document) -> List:
     return []

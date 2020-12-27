@@ -25,11 +25,16 @@ def train():
 if __name__ == "__main__":
     args = sys.argv
 
-    logger.info("Started application.")
+    # TODO: change this to use argpase
 
-    # Environment variables
-    os.environ.setdefault("SCRAPY_SETTINGS_MODULE", "wikicrawler.settings")
+    if len(args) == 2 and args[1] == "train":
+        train()
+    else:
+        logger.info("Started application.")
 
-    #log_file = open("logfile.log", "a")
-    wikicrawler.perform_crawl()
-    webapp.app.run(host="127.0.0.1", port=8000)
+        # Environment variables
+        os.environ.setdefault("SCRAPY_SETTINGS_MODULE", "wikicrawler.settings")
+
+        #log_file = open("logfile.log", "a")
+        wikicrawler.perform_crawl()
+        webapp.app.run(host="127.0.0.1", port=8000)
