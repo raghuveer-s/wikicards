@@ -1,1 +1,1 @@
-Wikipedia Six Degress of separation game
+Wikipedia Cards. Random bits of knowledge.
